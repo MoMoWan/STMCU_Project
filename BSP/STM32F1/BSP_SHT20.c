@@ -6,7 +6,7 @@ const int16_t POLYNOMIAL = 0x131;
 
 SHT20_INFO sht20_info;
 
-uint8_t SHT20_RxBuff[3];
+
 void I2C_Write_Data(I2C_HandleTypeDef *hi2c, uint8_t data)
 {
     HAL_I2C_Master_Transmit(hi2c, SHT20_ADDRESS << 1, &data, 1, 0xffff);
@@ -18,7 +18,8 @@ void I2C_Read_Data(I2C_HandleTypeDef *hi2c, uint8_t *Buf, uint8_t len)
 }
 
 float Get_SHT20_TEMP(void)
-{
+{   
+    uint8_t SHT20_RxBuff[3];
     unsigned short tmp = 0;
     float Temperature = 0;
     I2C_Write_Data(&hSHT20, SHT20_Measurement_T_HM);
@@ -31,6 +32,7 @@ float Get_SHT20_TEMP(void)
 }
 float Get_SHT20_HUM(void)
 {
+    uint8_t SHT20_RxBuff[3];
     unsigned short tmp = 0;
     float Humidity = 0;
     I2C_Write_Data(&hSHT20, SHT20_Measurement_RH_HM);
