@@ -1,6 +1,51 @@
 #include "BSP_SPI_SD.h"
 
-uint8_t SD_Type = 0; //SD卡的类型
+	uint8_t SD_Type = 0; //SD卡的类型
+	
+	
+	void SD_SPI_SpeedLow(void)
+{
+	 HAL_SPI_DeInit(&hspi1);
+	
+  hspi1.Instance = SPI1;
+  hspi1.Init.Mode = SPI_MODE_MASTER;
+  hspi1.Init.Direction = SPI_DIRECTION_2LINES;
+  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi1.Init.CLKPolarity = SPI_POLARITY_HIGH;
+  hspi1.Init.CLKPhase = SPI_PHASE_2EDGE;
+  hspi1.Init.NSS = SPI_NSS_SOFT;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256;
+  hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
+  hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
+  hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+  hspi1.Init.CRCPolynomial = 10;
+  if (HAL_SPI_Init(&hspi1) != HAL_OK)
+  {
+    Error_Handler();
+  }}
+//SD卡正常工作的时候,可以高速了
+void SD_SPI_SpeedHigh(void)
+{
+	 HAL_SPI_DeInit(&hspi1);
+	
+  hspi1.Instance = SPI1;
+  hspi1.Init.Mode = SPI_MODE_MASTER;
+  hspi1.Init.Direction = SPI_DIRECTION_2LINES;
+  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi1.Init.CLKPolarity = SPI_POLARITY_HIGH;
+  hspi1.Init.CLKPhase = SPI_PHASE_2EDGE;
+  hspi1.Init.NSS = SPI_NSS_SOFT;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;
+  hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
+  hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
+  hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+  hspi1.Init.CRCPolynomial = 10;
+  if (HAL_SPI_Init(&hspi1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+}
+
 ////////////////////////////////////移植修改区///////////////////////////////////
 //移植时候的接口
 //data:要写入的数据
@@ -197,6 +242,7 @@ uint32_t SD_GetSectorCount(void)
 //初始化SD卡
 uint8_t SD_Init(void)
 {
+
 	uint8_t r1=0;		// 存放SD卡的返回值
 	uint16_t retry=0; // 用来进行超时计数
 	uint8_t buf[4];

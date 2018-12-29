@@ -55,6 +55,7 @@
 //extern uint16_t Data_FDC;
 
 //相关函数申明
+void FDC_I2C2_ErrHandel(void);
 uint8_t FDC2214_WriteReg(uint8_t Reg, uint8_t MSB, uint8_t LSB);
 uint16_t FDC_ReadReg(uint8_t Reg);
 void FDC2214_Init(void);

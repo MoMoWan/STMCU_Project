@@ -4,6 +4,11 @@
 #include "spi.h"
 #include "stm32f1xx_hal.h"
 
+
+/*****
+#define hSDSPI hspi1
+*****/
+
 #define LL_GPIO  1  //LL¿â
 #define HAL_GPIO 0 //HAL¿â
 #if HAL_GPIO

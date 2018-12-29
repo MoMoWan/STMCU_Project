@@ -1,6 +1,10 @@
 #include "BSP_FDC2214.h"
 
-
+void FDC_I2C2_ErrHandel(void)
+{
+  HAL_I2C_DeInit(&hFDC2214);
+  MX_I2C2_Init();
+}
 
 /*IIC写2个字节 
  *reg:寄存器地址
@@ -16,7 +20,7 @@ uint8_t FDC2214_WriteReg(uint8_t Reg, uint8_t MSB, uint8_t LSB)
 	data[1] = LSB;
 	if ( HAL_I2C_Mem_Write(&hFDC2214,(uint16_t)(FDC2214_ADDR << 1), Reg,I2C_MEMADD_SIZE_8BIT,data, 2, 0xFF) != HAL_OK)
 	{
-		I2C2_ErrHandel();
+		FDC_I2C2_ErrHandel();
 		return 1;
 	}
 	else
@@ -37,7 +41,7 @@ uint16_t FDC2214_ReadReg(uint8_t Reg)
 	
 	if( HAL_I2C_Mem_Read(&hFDC2214,(uint16_t)(FDC2214_ADDR << 1), (uint16_t)Reg, I2C_MEMADD_SIZE_8BIT, Buf, 2, 0xFF) !=HAL_OK )
 	{
-  I2C2_ErrHandel();	
+  FDC_I2C2_ErrHandel();	
 	}
 	data = (Buf[0] << 8) | Buf[1];
 	return data;
@@ -87,9 +91,7 @@ void FDC2214_Init(void)
 
 uint32_t FCD2214_GetCap_Data(uint8_t CH) //数据分辨力28-bits
 {
-	uint32_t result=0 ;
-	uint16_t  Data_Statu=0;  
-	Data_Statu =FDC2214_ReadReg(FDC2214_STATUS);
+	uint32_t result=0 ; 
 //	if(  (Data_Statu & 0x40) ==0x40 )
 //	{
 	switch (CH)
