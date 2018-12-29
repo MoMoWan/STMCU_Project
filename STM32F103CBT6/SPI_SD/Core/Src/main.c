@@ -77,7 +77,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-uint32_t xMB=0,ncls=0,free=0;
+
 FRESULT res;
 uint32_t byteswritten, bytesread;                     /* File write/read counts */
 uint8_t wtext[] = "ABCDEFG FatFs"; /* File write buffer */
