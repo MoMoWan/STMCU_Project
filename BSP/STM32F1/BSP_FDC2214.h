@@ -57,7 +57,7 @@
 //相关函数申明
 uint8_t FDC2214_WriteReg(uint8_t Reg, uint8_t MSB, uint8_t LSB);
 uint16_t FDC_ReadReg(uint8_t Reg);
-uint8_t FDC2214_Init(void);
+void FDC2214_Init(void);
 uint32_t FCD2214_GetCap_Data(uint8_t CH);
 double FDC2214_Calculate_Cap(uint32_t Data_FDC);
 
