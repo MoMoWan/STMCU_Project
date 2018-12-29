@@ -67,7 +67,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+uint32_t FDC_Data=0;
+double Cap=0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -114,12 +115,15 @@ int main(void)
   MX_I2C2_Init();
   /* USER CODE BEGIN 2 */
   FDC2214_Init();
+	 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+			  FDC_Data =	FCD2214_GetCap_Data(0);
+			  Cap=FDC2214_Calculate_Cap(FDC_Data);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

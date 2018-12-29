@@ -87,7 +87,11 @@ void FDC2214_Init(void)
 
 uint32_t FCD2214_GetCap_Data(uint8_t CH) //数据分辨力28-bits
 {
-	uint32_t result;
+	uint32_t result=0 ;
+	uint16_t  Data_Statu=0;  
+	Data_Statu =FDC2214_ReadReg(FDC2214_STATUS);
+//	if(  (Data_Statu & 0x40) ==0x40 )
+//	{
 	switch (CH)
 	{
 	case 0:
@@ -110,6 +114,7 @@ uint32_t FCD2214_GetCap_Data(uint8_t CH) //数据分辨力28-bits
 		break;
 	}
 	result = result & 0x0FFFFFFF;
+// }
 	return result;
 }
 
