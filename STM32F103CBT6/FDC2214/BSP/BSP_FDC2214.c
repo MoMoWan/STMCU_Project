@@ -1,45 +1,7 @@
 #include "BSP_FDC2214.h"
 
-uint32_t Data_FDC;
 
-static HAL_StatusTypeDef I2Cx_ReadBuffer(uint16_t Addr, uint8_t Reg, uint16_t RegSize, uint8_t *pBuffer, uint16_t Length)
-{
-  HAL_StatusTypeDef status = HAL_OK;
 
-  status = HAL_I2C_Mem_Read(&hFDC2214, Addr, (uint16_t)Reg, RegSize, pBuffer, Length, 0xFF);
-  
-  /* Check the communication status */
-  if(status != HAL_OK)
-  {
-    /* Re-Initiaize the BUS */
-    I2C2_ErrHandel();
-  }        
-  return status;
-}
-
-static HAL_StatusTypeDef I2Cx_WriteBuffer(uint16_t Addr, uint8_t Reg, uint16_t RegSize, uint8_t *pBuffer, uint16_t Length)
-{
-  HAL_StatusTypeDef status = HAL_OK;
-  
-  status = HAL_I2C_Mem_Write(&hFDC2214, Addr, (uint16_t)Reg, RegSize, pBuffer, Length, 0xFF); 
-
-/* Check the communication status */
-  if(status != HAL_OK)
-  {
-    I2C2_ErrHandel();
-  }        
-  return status;
-}
-
-void FDC2214_Write(uint16_t DevAddress, uint8_t* pBuffer, uint8_t WriteAddr, uint16_t Length)
-{
-  I2Cx_WriteBuffer(DevAddress, WriteAddr, I2C_MEMADD_SIZE_16BIT, pBuffer, Length);
-}
-
-void FDC2214_Read(uint16_t DevAddress, uint8_t* pBuffer, uint8_t WriteAddr, uint16_t Length)
-{
-  I2Cx_ReadBuffer(DevAddress, WriteAddr, I2C_MEMADD_SIZE_16BIT, pBuffer, Length);
-}
 /*IIC写2个字节 
  *reg:寄存器地址
  *data1:数据1
@@ -47,13 +9,14 @@ void FDC2214_Read(uint16_t DevAddress, uint8_t* pBuffer, uint8_t WriteAddr, uint
  *返回值:0    正常
  *     其他  错误代码
 */
-uint8_t FDC2214_WriteReg(uint8_t reg, uint8_t MSB, uint8_t LSB)
+uint8_t FDC2214_WriteReg(uint8_t Reg, uint8_t MSB, uint8_t LSB)
 {
 	uint8_t data[2];
 	data[0] = MSB;
 	data[1] = LSB;
-	if (I2Cx_WriteBuffer( FDC2214_ADDR ,reg,I2C_MEMADD_SIZE_8BIT, data, 2) != HAL_OK)
+	if ( HAL_I2C_Mem_Write(&hFDC2214,(uint16_t)(FDC2214_ADDR << 1), Reg,I2C_MEMADD_SIZE_8BIT,data, 2, 0xFF) != HAL_OK)
 	{
+		I2C2_ErrHandel();
 		return 1;
 	}
 	else
@@ -71,7 +34,11 @@ uint16_t FDC2214_ReadReg(uint8_t Reg)
 {
 	uint16_t data=0;
 	uint8_t Buf[2]={0};
-	FDC2214_Read(FDC2214_ADDR, Buf,Reg,1); 
+	
+	if( HAL_I2C_Mem_Read(&hFDC2214,(uint16_t)(FDC2214_ADDR << 1), (uint16_t)Reg, I2C_MEMADD_SIZE_8BIT, Buf, 2, 0xFF) !=HAL_OK )
+	{
+  I2C2_ErrHandel();	
+	}
 	data = (Buf[0] << 8) | Buf[1];
 	return data;
 }
@@ -80,14 +47,19 @@ uint16_t FDC2214_ReadReg(uint8_t Reg)
 *返回值:0：初始化正常
 *       1：不正常
 */
-uint8_t FDC2214_Init(void)
+void FDC2214_Init(void)
 {
-	uint16_t MID=0,DID=0;
+	uint16_t MID=0x5449,DID=0x3055;
 
-	MID = FDC2214_ReadReg(FDC2214_MANUFACTURER_ID);
-	DID = FDC2214_ReadReg(FDC2214_DEVICE_ID);
-	if (MID == 0x5449  && DID == 0x3055)
+	while ( MID != FDC2214_ReadReg(FDC2214_MANUFACTURER_ID) )
 	{
+  ;	
+	}
+	while ( DID != FDC2214_ReadReg(FDC2214_DEVICE_ID) )
+	{
+  ;	
+	}
+
 		//设置FDC2214_WriteReg寄存器
 		FDC2214_WriteReg(FDC2214_RCOUNT_CH0, 0x34, 0xFB); //参考计数转换间隔时间（T=(RCOUNT_CH0*16)/Frefx）
 		FDC2214_WriteReg(FDC2214_RCOUNT_CH1, 0x34, 0xFB);
@@ -110,12 +82,7 @@ uint8_t FDC2214_Init(void)
 		FDC2214_WriteReg(FDC2214_MUX_CONFIG, 0xC2, 0x0D); //通道0，1，2 ，3；选择10Mhz为超过振荡槽振荡频率的最低设置，多通道，四通道
 
 		FDC2214_WriteReg(FDC2214_CONFIG, 0x14, 0x01); //激活模式，使用内部振荡器做参考频率，INTB引脚会随状态寄存器更新被置位
-	}
-	else
-	{
-		return 1;
-	}
-	return 0;
+
 }
 
 uint32_t FCD2214_GetCap_Data(uint8_t CH) //数据分辨力28-bits

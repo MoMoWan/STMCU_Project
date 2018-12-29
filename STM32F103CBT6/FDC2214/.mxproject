@@ -10,7 +10,6 @@ HeaderFiles#5=G:/STM32Project/STM32F103CBT6/FDC2214/Core/Inc/stm32f1xx_hal_conf.
 HeaderFiles#6=G:/STM32Project/STM32F103CBT6/FDC2214/Core/Inc/main.h
 HeaderFolderListSize=1
 HeaderPath#0=G:/STM32Project/STM32F103CBT6/FDC2214/Core/Inc
-HeaderFiles=;
 SourceFileListSize=6
 SourceFiles#0=G:/STM32Project/STM32F103CBT6/FDC2214/Core/Src/gpio.c
 SourceFiles#1=G:/STM32Project/STM32F103CBT6/FDC2214/Core/Src/i2c.c
@@ -20,6 +19,7 @@ SourceFiles#4=G:/STM32Project/STM32F103CBT6/FDC2214/Core/Src/stm32f1xx_hal_msp.c
 SourceFiles#5=G:/STM32Project/STM32F103CBT6/FDC2214/Core/Src/main.c
 SourceFolderListSize=1
 SourcePath#0=G:/STM32Project/STM32F103CBT6/FDC2214/Core/Src
+HeaderFiles=;
 SourceFiles=;
 
 [PreviousLibFiles]
