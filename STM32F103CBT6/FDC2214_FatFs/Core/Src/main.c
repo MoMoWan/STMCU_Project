@@ -132,12 +132,7 @@ int main(void)
 		{
 		 while(1);
 		}
-		
-		Res=f_open( &USERFile,(const TCHAR*)USERPath,FA_CREATE_ALWAYS | FA_WRITE);
-		if( Res!= FR_OK )
-		{
-		 while(1);
-		}
+	
 		
   /* USER CODE END 2 */
 
@@ -145,13 +140,18 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+					Res=f_open( &USERFile,"Record.txt",FA_CREATE_ALWAYS | FA_WRITE);
+					if( Res!= FR_OK )
+					{
+						while(1);
+					}
 			 sprintf( (char *)Fat_Wdata,"%10.10f\r\n",FDC2214_Calculate_Cap( FCD2214_GetCap_Data(0) ));
 			 Res = f_write(&USERFile, Fat_Wdata, sizeof(Fat_Wdata), (void *)&byteswritten);
 				if( Res!= FR_OK )
 				{
 					while(1);
 				}
-				
+				f_close(&USERFile);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
