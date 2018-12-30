@@ -56,7 +56,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */     
+#include "gui.h"
 #include "BSP_Key.h"
+#include "BSP_LED.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -190,7 +192,29 @@ void StartDefaultTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    LED2_ON;
+    osDelay(100);
+    LED2_OFF;
+
+    LED3_ON;
+    osDelay(100);
+    LED3_OFF;
+
+    LED4_ON;
+    osDelay(100);
+    LED4_OFF;
+
+    LED5_ON;
+    osDelay(100);
+    LED5_OFF;
+
+    LED4_ON;
+    osDelay(100);
+    LED4_OFF;
+
+    LED3_ON;
+    osDelay(100);
+    LED3_OFF;
   }
   /* USER CODE END StartDefaultTask */
 }
@@ -205,6 +229,10 @@ void StartDefaultTask(void const * argument)
 void StartGUITask(void const * argument)
 {
   /* USER CODE BEGIN StartGUITask */
+	 GUI_Init();
+  GUI_SetBkColor(GUI_BLACK);
+  GUI_SetColor(GUI_GREEN);
+  GUI_Clear();
   /* Infinite loop */
   for(;;)
   {
@@ -223,10 +251,46 @@ void StartGUITask(void const * argument)
 void StartKeyTask(void const * argument)
 {
   /* USER CODE BEGIN StartKeyTask */
+	 Key_Statu_Typedef Key;
+
+  Key_init(&Key);
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    Scan_Key(&Key);
+    if (Key.Count > 80)
+    {
+      if (Key.Key_Special_Flag)
+      {
+        Key.Key_Special_Flag = 2;
+      }
+      else if (Key.Key_Left_Flag)
+      {
+        Key.Key_Left_Flag = 2;
+      }
+
+      else if (Key.Key_Right_Flag)
+      {
+        Key.Key_Right_Flag = 2;
+      }
+
+      else if (Key.Key_Down_Flag)
+      {
+        Key.Key_Down_Flag = 2;
+      }
+
+      else if (Key.Key_Up_Flag)
+      {
+        Key.Key_Up_Flag = 2;
+      }
+      else if (Key.Key_WKUP_Flag)
+      {
+        Key.Key_WKUP_Flag = 2;
+        osMessagePut(StopQueueHandle, (uint32_t)Key.Key_WKUP_Flag, 10);
+      }
+    }						
+    osMessagePut(KeyQueueHandle, (uint32_t)&Key, 0);
+    osDelay(10);
   }
   /* USER CODE END StartKeyTask */
 }

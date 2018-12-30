@@ -5,8 +5,8 @@
 #include "gpio.h"
 #include "stdlib.h"
 
-#define LL_GPIO  0  //LL¿â
-#define HAL_GPIO 1 //HAL¿â
+#define LL_GPIO  1  //LL¿â
+#define HAL_GPIO 0 //HAL¿â
 
 //SPIÏÔÊ¾ÆÁ½Ó¿Ú
 #if HAL_GPIO
