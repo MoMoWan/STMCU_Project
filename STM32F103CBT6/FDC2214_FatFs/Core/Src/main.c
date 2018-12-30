@@ -57,6 +57,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "stdlib.h"
+#include "string.h"
+
 #include "BSP_FDC2214.h"
 /* USER CODE END Includes */
 
@@ -79,8 +82,11 @@
 
 /* USER CODE BEGIN PV */
 FRESULT Res;
-uint8_t Fat_Wdata[16]={0};
+char  Fat_Wdata[1024]={0};
+char  Data_buf[16]={0};
 uint32_t byteswritten, bytesread;                     /* File write/read counts */
+
+uint16_t Fat_index=0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -101,7 +107,7 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+ 
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -126,6 +132,7 @@ int main(void)
   MX_FATFS_Init();
   MX_I2C2_Init();
   /* USER CODE BEGIN 2 */
+
   FDC2214_Init();
 		Res=f_mount( &USERFatFS,(const TCHAR*)USERPath,1);
 		if( Res!= FR_OK )
@@ -140,12 +147,19 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-					Res=f_open( &USERFile,"Record.txt",FA_CREATE_ALWAYS | FA_WRITE);
-					if( Res!= FR_OK )
-					{
-						while(1);
-					}
-			 sprintf( (char *)Fat_Wdata,"%10.10f\r\n",FDC2214_Calculate_Cap( FCD2214_GetCap_Data(0) ));
+			 for(Fat_index=0;Fat_index<50;Fat_index++)
+				{
+					sprintf( Data_buf,"%10.10f\n",FDC2214_Calculate_Cap( FCD2214_GetCap_Data(0) ));
+					strcat((char *)Fat_Wdata,(char *)Data_buf);
+				}
+				
+			
+			
+				Res=f_open( &USERFile,"Record.txt",FA_CREATE_ALWAYS | FA_WRITE);
+				if( Res!= FR_OK )
+			 {
+				while(1);
+				}
 			 Res = f_write(&USERFile, Fat_Wdata, sizeof(Fat_Wdata), (void *)&byteswritten);
 				if( Res!= FR_OK )
 				{
